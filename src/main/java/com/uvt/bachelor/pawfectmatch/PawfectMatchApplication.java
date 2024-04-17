@@ -2,11 +2,10 @@ package com.uvt.bachelor.pawfectmatch;
 
 import com.uvt.bachelor.pawfectmatch.entity.*;
 import com.uvt.bachelor.pawfectmatch.repository.*;
-import jakarta.annotation.PostConstruct;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import java.time.LocalDate;
+import java.time.OffsetDateTime;
 import java.util.Optional;
 
 import static java.util.Collections.singleton;
@@ -36,13 +35,13 @@ public class PawfectMatchApplication {
 		SpringApplication.run(PawfectMatchApplication.class, args);
 	}
 
-	@PostConstruct
+//	@PostConstruct
 	public void constructData() {
 
 		var owner = new PetOwner();
 		owner.setEmail("test@test.com");
-		owner.setFirstName("Jane");
-		owner.setLastName("Doe");
+		owner.setFirstName("Michael");
+		owner.setLastName("Jackson");
 		petOwnerRepository.save(owner);
 
 		var address = new Address();
@@ -73,12 +72,12 @@ public class PawfectMatchApplication {
 
 		var pancho = new Pet();
 		pancho.setAge(2);
-		pancho.setName("Pancho");
+		pancho.setName("Peanut");
 		pancho.setAwards(singleton(award));
 		pancho.setBreed("Golden Retriever");
 		pancho.setColor("White");
 		pancho.setDescription("Almost Amazing");
-		pancho.setGender("male");
+		pancho.setGender("female");
 		pancho.setType("Dog");
 		pancho.setOwner(owner);
 		petRepository.save(pancho);
@@ -96,12 +95,12 @@ public class PawfectMatchApplication {
 			if (match1.isPresent()) {
 				Match m1 = match1.get();
 				m1.setFullMatch(true);
-				m1.setMatchDate(LocalDate.now());
+				m1.setMatchDate(OffsetDateTime.now());
 				matchRepository.save(m1);
 			} else {
 				Match m2 = match2.get();
 				m2.setFullMatch(true);
-				m2.setMatchDate(LocalDate.now());
+				m2.setMatchDate(OffsetDateTime.now());
 				matchRepository.save(m2);
 			}
 		} else {

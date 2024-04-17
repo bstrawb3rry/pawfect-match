@@ -2,7 +2,7 @@ package com.uvt.bachelor.pawfectmatch.entity;
 
 import jakarta.persistence.*;
 
-import java.time.LocalDate;
+import java.time.OffsetDateTime;
 
 @Entity
 @Table(name = "MATCH")
@@ -29,7 +29,7 @@ public class Match {
     private Boolean fullMatch;
 
     @Column(name = "match_date")
-    private LocalDate matchDate;
+    private OffsetDateTime matchDate;
 
     public Match() {
     }
@@ -66,11 +66,11 @@ public class Match {
         this.fullMatch = fullMatch;
     }
 
-    public LocalDate getMatchDate() {
+    public OffsetDateTime getMatchDate() {
         return matchDate;
     }
 
-    public void setMatchDate(LocalDate matchDate) {
+    public void setMatchDate(OffsetDateTime matchDate) {
         this.matchDate = matchDate;
     }
 }

@@ -3,6 +3,7 @@ package com.uvt.bachelor.pawfectmatch.entity;
 import jakarta.annotation.Nonnull;
 import jakarta.persistence.*;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -159,5 +160,12 @@ public class Pet {
 
     public void setReceivedMatches(Set<Match> receivedMatches) {
         this.receivedMatches = receivedMatches;
+    }
+
+    public Set<Match> getAllMatches() {
+        Set<Match> matches = new HashSet<>();
+        matches.addAll(initiatedMatches);
+        matches.addAll(receivedMatches);
+        return matches;
     }
 }

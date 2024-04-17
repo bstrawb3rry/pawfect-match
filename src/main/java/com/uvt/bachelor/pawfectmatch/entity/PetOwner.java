@@ -34,6 +34,7 @@ public class PetOwner {
     private Set<Pet> pets = new HashSet<>();
 
     @OneToOne(mappedBy = "owner")
+    @Nonnull
     private Address address;
 
     public PetOwner() {
