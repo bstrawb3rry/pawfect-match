@@ -1,5 +1,7 @@
 package com.uvt.bachelor.pawfectmatch.model;
 
+import java.util.List;
+
 public class PetDto {
 
     private Long id;
@@ -12,6 +14,7 @@ public class PetDto {
     private String description;
     private PetOwnerDto owner;
     //todo add awards
+    private List<Long> photoIds;
 
     public PetDto() {
     }
@@ -86,5 +89,13 @@ public class PetDto {
 
     public void setOwner(PetOwnerDto owner) {
         this.owner = owner;
+    }
+
+    public List<Long> getPhotoIds() {
+        return photoIds;
+    }
+
+    public void setPhotoIds(List<Long> photoIds) {
+        this.photoIds = photoIds;
     }
 }

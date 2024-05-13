@@ -2,11 +2,16 @@ package com.uvt.bachelor.pawfectmatch;
 
 import com.uvt.bachelor.pawfectmatch.entity.Match;
 import com.uvt.bachelor.pawfectmatch.entity.Pet;
+import com.uvt.bachelor.pawfectmatch.entity.PetImage;
 import com.uvt.bachelor.pawfectmatch.entity.PetOwner;
 import com.uvt.bachelor.pawfectmatch.model.MatchDto;
 import com.uvt.bachelor.pawfectmatch.model.PetDto;
 import com.uvt.bachelor.pawfectmatch.model.PetOwnerDto;
 import org.apache.commons.lang3.ObjectUtils;
+
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class Transformer {
 
@@ -22,8 +27,13 @@ public class Transformer {
             dto.setGender(entity.getGender());
             dto.setColor(entity.getColor());
             dto.setOwner(toDto(entity.getOwner()));
+            dto.setPhotoIds(mapPhotosToDto(entity.getPhotos()));
         }
         return dto;
+    }
+
+    public static List<Long> mapPhotosToDto(Set<PetImage> photos) {
+        return photos.stream().map(PetImage::getId).collect(Collectors.toList());
     }
 
     public static Pet fromDto(PetDto dto) {
