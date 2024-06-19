@@ -36,6 +36,7 @@ public class MatchService {
             match = new Match();
             match.setPetInitMatch(initiator);
             match.setPetResponseMatch(receiver);
+            match.setFullMatch(false);
         }
 
         matchRepository.save(match);

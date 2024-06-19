@@ -1,12 +1,10 @@
 package com.uvt.bachelor.pawfectmatch;
 
-import com.uvt.bachelor.pawfectmatch.entity.Match;
-import com.uvt.bachelor.pawfectmatch.entity.Pet;
-import com.uvt.bachelor.pawfectmatch.entity.PetImage;
-import com.uvt.bachelor.pawfectmatch.entity.PetOwner;
+import com.uvt.bachelor.pawfectmatch.entity.*;
 import com.uvt.bachelor.pawfectmatch.model.MatchDto;
 import com.uvt.bachelor.pawfectmatch.model.PetDto;
 import com.uvt.bachelor.pawfectmatch.model.PetOwnerDto;
+import com.uvt.bachelor.pawfectmatch.model.UserDto;
 import org.apache.commons.lang3.ObjectUtils;
 
 import java.util.List;
@@ -28,6 +26,17 @@ public class Transformer {
             dto.setColor(entity.getColor());
             dto.setOwner(toDto(entity.getOwner()));
             dto.setPhotoIds(mapPhotosToDto(entity.getPhotos()));
+        }
+        return dto;
+    }
+
+    public static UserDto toDto(User entity) {
+        var dto = new UserDto();
+        if (!ObjectUtils.isEmpty(entity)) {
+            dto.setId(entity.getId());
+            dto.setEnabled(entity.getEnabled());
+            dto.setUsername(entity.getUsername());
+            dto.setPassword(entity.getPassword());
         }
         return dto;
     }

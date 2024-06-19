@@ -48,4 +48,15 @@ import java.util.List;
         return ResponseEntity.ok(petService.getPetFullMatches(id, age, color, awardName, city));
     }
 
+    @GetMapping(value = "breeds/{type}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<String>> getBreeds(@PathVariable("type") String type) {
+        return ResponseEntity.ok(petService.getBreeds(type));
+    }
+
+    @GetMapping(value = "colors/{type}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<String>> getPet(@PathVariable("type") String type) {
+        return ResponseEntity.ok(petService.getColors(type));
+    }
+
+
 }

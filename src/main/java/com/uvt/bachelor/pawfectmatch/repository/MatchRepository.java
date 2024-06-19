@@ -15,6 +15,7 @@ public interface MatchRepository extends JpaRepository<Match, Long> {
 
     public Optional<Match> findByPetInitMatchAndPetResponseMatch(Pet petInitMatch, Pet petResponseMatch);
 
+    @Query("SELECT m FROM Match m WHERE m.fullMatch = :fullMatch")
     List<Match> findAllByFullMatch(boolean fullMatch);
 
     @Query("SELECT m FROM Match m WHERE (m.petInitMatch = :petInitMatch AND m.petResponseMatch = :petResponseMatch) OR (m.petInitMatch = :petResponseMatch AND m.petResponseMatch = :petInitMatch)")

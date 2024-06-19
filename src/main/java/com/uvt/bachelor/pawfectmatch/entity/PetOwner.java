@@ -37,6 +37,11 @@ public class PetOwner {
     @Nonnull
     private Address address;
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
+
+
     public PetOwner() {
     }
 
@@ -88,6 +93,14 @@ public class PetOwner {
 
     public void setAddress(Address address) {
         this.address = address;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }
 

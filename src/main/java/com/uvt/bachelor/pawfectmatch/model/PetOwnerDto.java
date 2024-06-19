@@ -6,7 +6,7 @@ public class PetOwnerDto {
     private String firstName;
     private String lastName;
     private String email;
-    //todo add address
+    private String address;
 
     public PetOwnerDto(){
 
@@ -42,5 +42,13 @@ public class PetOwnerDto {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 }

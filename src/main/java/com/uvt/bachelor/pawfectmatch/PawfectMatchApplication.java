@@ -118,8 +118,8 @@ public class PawfectMatchApplication {
 //		g.setOwner(owner);
 //		petRepository.save(g);
 
-		var h = petRepository.findById(3L).get();
-		var i = petRepository.findById(1L).get();
+		var h = petRepository.findById(5L).get();
+		//var i = petRepository.findById(1L).get();
 //		var j = petRepository.findById(8L).get();
 //		var k = petRepository.findById(9L).get();
 //		var l = petRepository.findById(10L).get();
@@ -128,10 +128,10 @@ public class PawfectMatchApplication {
 
 		try {
 
-			addImg("hhhh1.jpeg", h);
-			addImg("hhhh2.jpeg", h);
-			addImg("iiii1.jpeg", i);
-			addImg("iiii2.jpeg", i);
+			addImg("pom1.jpg", h);
+			addImg("pom2.jpg", h);
+			//addImg("iiii1.jpeg", i);
+			//addImg("iiii2.jpeg", i);
 //			addImg("jjjj.jpeg", j);
 //			addImg("kkkk.jpeg", k);
 //			addImg("llll.jpeg", l);

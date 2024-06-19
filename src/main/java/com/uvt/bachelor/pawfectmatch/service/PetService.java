@@ -1,13 +1,13 @@
 package com.uvt.bachelor.pawfectmatch.service;
 
 import com.uvt.bachelor.pawfectmatch.Transformer;
+import com.uvt.bachelor.pawfectmatch.entity.Breed;
+import com.uvt.bachelor.pawfectmatch.entity.Color;
 import com.uvt.bachelor.pawfectmatch.entity.Match;
 import com.uvt.bachelor.pawfectmatch.entity.Pet;
 import com.uvt.bachelor.pawfectmatch.exception.PawfectMatchException;
 import com.uvt.bachelor.pawfectmatch.model.PetDto;
-import com.uvt.bachelor.pawfectmatch.repository.MatchRepository;
-import com.uvt.bachelor.pawfectmatch.repository.PetOwnerRepository;
-import com.uvt.bachelor.pawfectmatch.repository.PetRepository;
+import com.uvt.bachelor.pawfectmatch.repository.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,16 +23,23 @@ public class PetService {
     private final PetRepository petRepository;
     private final PetOwnerRepository ownerRepository;
     private final MatchRepository matchRepository;
+    private final BreedRepository breedRepository;
+    private final ColorRepository colorRepository;
 
     public PetService(PetRepository petRepository,
-                      PetOwnerRepository ownerRepository, MatchRepository matchRepository) {
+                      PetOwnerRepository ownerRepository, MatchRepository matchRepository,
+                      BreedRepository breedRepository, ColorRepository colorRepository) {
         this.petRepository = petRepository;
         this.ownerRepository = ownerRepository;
         this.matchRepository = matchRepository;
+        this.breedRepository = breedRepository;
+        this.colorRepository = colorRepository;
     }
 
     public List<PetDto> getPetsByOwner(Long ownerId) {
-        return petRepository.findByOwnerId(ownerId).stream().map(Transformer::toDto).collect(Collectors.toList());
+        return petRepository.findByOwnerId(ownerId).stream()
+                .sorted(Comparator.comparing(Pet::getName))
+                .map(Transformer::toDto).collect(Collectors.toList());
     }
 
     public PetDto addPet(PetDto petDto, Long ownerId) {
@@ -66,7 +73,7 @@ public class PetService {
 
     private static List<Pet> filterPets(Integer age, String color, String awardName, String city, List<Pet> matchingPets) {
         if (!isEmpty(age)) {
-            matchingPets = matchingPets.stream().filter(p -> p.getAge().equals(age)).collect(Collectors.toList());
+            matchingPets = matchingPets.stream().filter(p -> p.getAge() <= age).collect(Collectors.toList());
         }
         if (!isEmpty(color)) {
             matchingPets = matchingPets.stream().filter(p -> p.getColor().equals(color)).collect(Collectors.toList());
@@ -110,5 +117,13 @@ public class PetService {
         Set<Match> matches = pet.getAllMatches();
         matchRepository.deleteAll(matches);
         petRepository.delete(pet);
+    }
+
+    public List<String> getBreeds(String type) {
+        return breedRepository.findBreedsByType(type).stream().map(Breed::getName).sorted(Comparator.naturalOrder()).collect(Collectors.toList());
+    }
+
+    public List<String> getColors(String type) {
+        return colorRepository.findColorsByType(type).stream().map(Color::getColor).sorted(Comparator.naturalOrder()).collect(Collectors.toList());
     }
 }
