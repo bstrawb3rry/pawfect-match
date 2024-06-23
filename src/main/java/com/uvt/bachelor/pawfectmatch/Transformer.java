@@ -1,15 +1,14 @@
 package com.uvt.bachelor.pawfectmatch;
 
 import com.uvt.bachelor.pawfectmatch.entity.*;
-import com.uvt.bachelor.pawfectmatch.model.MatchDto;
-import com.uvt.bachelor.pawfectmatch.model.PetDto;
-import com.uvt.bachelor.pawfectmatch.model.PetOwnerDto;
-import com.uvt.bachelor.pawfectmatch.model.UserDto;
+import com.uvt.bachelor.pawfectmatch.model.*;
 import org.apache.commons.lang3.ObjectUtils;
 
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import static org.springframework.util.ObjectUtils.isEmpty;
 
 public class Transformer {
 
@@ -25,7 +24,24 @@ public class Transformer {
             dto.setGender(entity.getGender());
             dto.setColor(entity.getColor());
             dto.setOwner(toDto(entity.getOwner()));
-            dto.setPhotoIds(mapPhotosToDto(entity.getPhotos()));
+            if (!isEmpty(entity.getPhotos())) {
+                dto.setPhotoIds(mapPhotosToDto(entity.getPhotos()));
+            }
+        }
+        return dto;
+    }
+
+    public static ChatMessageDto toDto(ChatMessage entity, PetOwner sender, PetOwner receiver) {
+        var dto = new ChatMessageDto();
+        if (!ObjectUtils.isEmpty(entity)) {
+            dto.setId(entity.getId());
+            dto.setContent(entity.getContent());
+            dto.setSenderId(entity.getSenderId());
+            dto.setReceiverId(entity.getReceiverId());
+            String senderName = sender.getFirstName() + " " + sender.getLastName();
+            String receiverName = receiver.getFirstName() + " " + receiver.getLastName();
+            dto.setSenderName(senderName);
+            dto.setReceiverName(receiverName);
         }
         return dto;
     }
