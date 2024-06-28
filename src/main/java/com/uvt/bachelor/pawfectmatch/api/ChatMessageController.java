@@ -22,19 +22,19 @@ public class ChatMessageController {
 
     @MessageMapping("/chat")
     @SendTo("/topic/messages")
-    public ChatMessageDto sendMessage(ChatMessageDto message) {
+    public ResponseEntity<ChatMessageDto> sendMessage(ChatMessageDto message) {
         chatService.sendMessage(message);
-        return message;
+        return ResponseEntity.ok(message);
     }
 
     @GetMapping("/chat/{senderId}/{receiverId}")
-    public List<ChatMessageDto> getMessagesForUser(@PathVariable Long senderId, @PathVariable Long receiverId) {
+    public List<ChatMessageDto> getMessagesForPet(@PathVariable Long senderId, @PathVariable Long receiverId) {
         return chatService.getMessagesByChatId(senderId, receiverId);
     }
 
-    @GetMapping("/chats/user/{userId}")
-    public ResponseEntity<List<ChatMessageDto>> getUserChats(@PathVariable Long userId) {
-        List<ChatMessageDto> chats = chatService.getChatsForUser(userId);
+    @GetMapping("/chats/pet/{petId}")
+    public ResponseEntity<List<ChatMessageDto>> getUserChats(@PathVariable Long petId) {
+        List<ChatMessageDto> chats = chatService.getChatsForUser(petId);
         return ResponseEntity.ok(chats);
     }
 

@@ -31,15 +31,15 @@ public class Transformer {
         return dto;
     }
 
-    public static ChatMessageDto toDto(ChatMessage entity, PetOwner sender, PetOwner receiver) {
+    public static ChatMessageDto toDto(ChatMessage entity, Pet sender, Pet receiver) {
         var dto = new ChatMessageDto();
         if (!ObjectUtils.isEmpty(entity)) {
             dto.setId(entity.getId());
             dto.setContent(entity.getContent());
             dto.setSenderId(entity.getSenderId());
             dto.setReceiverId(entity.getReceiverId());
-            String senderName = sender.getFirstName() + " " + sender.getLastName();
-            String receiverName = receiver.getFirstName() + " " + receiver.getLastName();
+            String senderName = sender.getName();
+            String receiverName = receiver.getName();
             dto.setSenderName(senderName);
             dto.setReceiverName(receiverName);
         }

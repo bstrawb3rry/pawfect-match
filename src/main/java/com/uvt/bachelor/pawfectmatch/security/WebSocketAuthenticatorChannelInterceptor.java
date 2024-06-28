@@ -24,6 +24,8 @@ public class WebSocketAuthenticatorChannelInterceptor implements ChannelIntercep
             if (authToken != null && jwtTokenUtil.validateToken(authToken)) {
                 String username = jwtTokenUtil.getUsernameFromToken(authToken);
                 accessor.setUser(new UserPrincipal(username));
+            } else {
+                throw new IllegalArgumentException("Invalid JWT token");
             }
         }
         return message;

@@ -2,10 +2,10 @@ package com.uvt.bachelor.pawfectmatch.service;
 
 import com.uvt.bachelor.pawfectmatch.Transformer;
 import com.uvt.bachelor.pawfectmatch.entity.ChatMessage;
-import com.uvt.bachelor.pawfectmatch.entity.PetOwner;
+import com.uvt.bachelor.pawfectmatch.entity.Pet;
 import com.uvt.bachelor.pawfectmatch.model.ChatMessageDto;
 import com.uvt.bachelor.pawfectmatch.repository.ChatMessageRepository;
-import com.uvt.bachelor.pawfectmatch.repository.PetOwnerRepository;
+import com.uvt.bachelor.pawfectmatch.repository.PetRepository;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -17,11 +17,11 @@ import java.util.stream.Collectors;
 public class ChatService {
 
     private final ChatMessageRepository chatMessageRepository;
-    private final PetOwnerRepository petOwnerRepository;
+    private final PetRepository petRepository;
 
-    public ChatService(ChatMessageRepository chatMessageRepository, PetOwnerRepository petOwnerRepository) {
+    public ChatService(ChatMessageRepository chatMessageRepository, PetRepository petRepository) {
         this.chatMessageRepository = chatMessageRepository;
-        this.petOwnerRepository = petOwnerRepository;
+        this.petRepository = petRepository;
     }
 
     public List<ChatMessageDto> getChatsForUser(Long userId) {
@@ -47,9 +47,9 @@ public class ChatService {
     private ChatMessageDto mapToChatDto(ChatMessage chat) {
         Long senderId = chat.getSenderId();
         Long receiverId = chat.getReceiverId();
-        PetOwner senderOwner = petOwnerRepository.findById(senderId).orElseThrow();
-        PetOwner receiverOwner = petOwnerRepository.findById(receiverId).orElseThrow();
-        return Transformer.toDto(chat, senderOwner, receiverOwner);
+        Pet sender = petRepository.findById(senderId).orElseThrow();
+        Pet receiver = petRepository.findById(receiverId).orElseThrow();
+        return Transformer.toDto(chat, sender, receiver);
     }
 
 }
