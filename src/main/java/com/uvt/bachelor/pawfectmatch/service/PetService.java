@@ -61,11 +61,16 @@ public class PetService {
         matchingPets.removeAll(initiatedMatches);
 
         List<Match> fullMatches = matchRepository.findAllByFullMatch(true);
-        Set<Pet> myFullMatches = fullMatches.stream()
-                .filter(m -> m.getPetInitMatch() == pet || m.getPetResponseMatch() == pet)
+        Set<Pet> myFullInitMatches = fullMatches.stream()
+                .filter(m -> m.getPetInitMatch() == pet)
                 .map(Match::getPetResponseMatch)
                 .collect(Collectors.toSet());
-        matchingPets.removeAll(myFullMatches);
+        matchingPets.removeAll(myFullInitMatches);
+        Set<Pet> myFullResponseMatches = fullMatches.stream()
+                .filter(m -> m.getPetResponseMatch() == pet)
+                .map(Match::getPetInitMatch)
+                .collect(Collectors.toSet());
+        matchingPets.removeAll(myFullResponseMatches);
 
         matchingPets = filterPets(age, color, awardName, city, matchingPets);
 
