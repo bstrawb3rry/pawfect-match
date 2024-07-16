@@ -7,6 +7,7 @@ public class UserDto {
     private String password;
     private boolean enabled;
     private PetOwnerDto petOwner;
+    private AddressDto address;
 
     public UserDto() {
     }
@@ -49,5 +50,13 @@ public class UserDto {
 
     public void setPetOwner(PetOwnerDto petOwner) {
         this.petOwner = petOwner;
+    }
+
+    public AddressDto getAddress() {
+        return address;
+    }
+
+    public void setAddress(AddressDto address) {
+        this.address = address;
     }
 }

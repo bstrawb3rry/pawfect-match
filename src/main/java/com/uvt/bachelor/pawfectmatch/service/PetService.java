@@ -49,8 +49,16 @@ public class PetService {
         return Transformer.toDto(petRepository.save(pet));
     }
 
+    public PetDto editPet(PetDto petDto) {
+        var pet = petRepository.findById(petDto.getId()).orElseThrow(() -> new PawfectMatchException(String.format("Pet with id: %d not found.", petDto.getId())));
+        pet.setAge(pet.getAge());
+        pet.setColor(pet.getColor());
+        pet.setDescription(pet.getDescription());
+        return Transformer.toDto(petRepository.save(pet));
+    }
+
     //todo refactor
-    public List<PetDto> getPetsForPossibleMatching(Long id, Long ownerId, Integer age, String color, String awardName, String city) {
+    public List<PetDto> getPetsForPossibleMatching(Long id, Long ownerId, Integer startAge, Integer endAge, String color, String awardName, String city) {
         var pet = petRepository.findById(id).orElseThrow(() -> new PawfectMatchException(String.format("Pet with id: %d not found", id)));
         ownerRepository.findById(ownerId).orElseThrow(() -> new PawfectMatchException(String.format("Owner with id: %d not found.", ownerId)));
         List<Pet> matchingPets = petRepository.findMatchingPets(pet.getType(), pet.getBreed(), pet.getGender(), id, ownerId);
@@ -72,14 +80,17 @@ public class PetService {
                 .collect(Collectors.toSet());
         matchingPets.removeAll(myFullResponseMatches);
 
-        matchingPets = filterPets(age, color, awardName, city, matchingPets);
+        matchingPets = filterPets(startAge, endAge, color, awardName, city, matchingPets);
 
         return matchingPets.stream().map(Transformer::toDto).collect(Collectors.toList());
     }
 
-    private static List<Pet> filterPets(Integer age, String color, String awardName, String city, List<Pet> matchingPets) {
-        if (!isEmpty(age)) {
-            matchingPets = matchingPets.stream().filter(p -> p.getAge() <= age).collect(Collectors.toList());
+    private static List<Pet> filterPets(Integer startAge, Integer endAge, String color, String awardName, String city, List<Pet> matchingPets) {
+        if (!isEmpty(startAge)) {
+            matchingPets = matchingPets.stream().filter(p -> p.getAge() >= startAge).collect(Collectors.toList());
+        }
+        if (!isEmpty(endAge)) {
+            matchingPets = matchingPets.stream().filter(p -> p.getAge() <= endAge).collect(Collectors.toList());
         }
         if (!isEmpty(color)) {
             matchingPets = matchingPets.stream().filter(p -> p.getColor().equals(color)).collect(Collectors.toList());
@@ -100,7 +111,7 @@ public class PetService {
         return matchingPets;
     }
 
-    public List<PetDto> getPetFullMatches(Long id, Integer age, String color, String awardName, String city) {
+    public List<PetDto> getPetFullMatches(Long id, Integer startAge, Integer endAge, String color, String awardName, String city) {
         Pet pet = petRepository.findById(id).orElseThrow(() -> new PawfectMatchException(String.format("Pet with id: %d not found", id)));
         List<Match> fullMatches = matchRepository.findFullMatches(pet).stream()
                 .sorted(Comparator.comparing(Match::getMatchDate, OffsetDateTime::compareTo).reversed())
@@ -112,7 +123,7 @@ public class PetService {
         matchingPets.addAll(receivers);
         matchingPets.remove(pet);
 
-        matchingPets = filterPets(age, color, awardName, city, matchingPets);
+        matchingPets = filterPets(startAge, endAge, color, awardName, city, matchingPets);
 
         return matchingPets.stream().map(Transformer::toDto).collect(Collectors.toList());
     }

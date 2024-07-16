@@ -25,6 +25,11 @@ import java.util.List;
         return ResponseEntity.status(HttpStatus.CREATED).body(petService.addPet(petDto,ownerId));
     }
 
+    @PutMapping(value = "/edit")
+    public ResponseEntity<PetDto> editPet(@RequestBody PetDto petDto) {
+        return ResponseEntity.status(HttpStatus.OK).body(petService.editPet(petDto));
+    }
+
     @DeleteMapping(value = "/{id}")
     public void deletePet(@PathVariable("id") Long id) {
         petService.deletePet(id);
@@ -32,20 +37,22 @@ import java.util.List;
 
     @GetMapping(value = "/{id}/owner/{ownerId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<PetDto>> getPetsForPossibleMatching(@PathVariable("id") Long id, @PathVariable("ownerId") Long ownerId,
-                                                                   @RequestParam(required = false) Integer age,
+                                                                   @RequestParam(required = false) Integer startAge,
+                                                                   @RequestParam(required = false) Integer endAge,
                                                                    @RequestParam(required = false) String color,
                                                                    @RequestParam(required = false) String awardName,
                                                                    @RequestParam(required = false) String city) {
-        return ResponseEntity.ok(petService.getPetsForPossibleMatching(id,ownerId, age, color, awardName, city));
+        return ResponseEntity.ok(petService.getPetsForPossibleMatching(id,ownerId, startAge, endAge, color, awardName, city));
     }
 
     @GetMapping(value = "/{id}/matches", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<PetDto>> getPetsMatches(@PathVariable("id") Long id,
-                                                       @RequestParam(required = false) Integer age,
+                                                       @RequestParam(required = false) Integer startAge,
+                                                       @RequestParam(required = false) Integer endAge,
                                                        @RequestParam(required = false) String color,
                                                        @RequestParam(required = false) String awardName,
                                                        @RequestParam(required = false) String city) {
-        return ResponseEntity.ok(petService.getPetFullMatches(id, age, color, awardName, city));
+        return ResponseEntity.ok(petService.getPetFullMatches(id, startAge, endAge, color, awardName, city));
     }
 
     @GetMapping(value = "breeds/{type}", produces = MediaType.APPLICATION_JSON_VALUE)
