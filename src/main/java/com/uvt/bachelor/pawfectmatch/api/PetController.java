@@ -7,7 +7,11 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+
+import static org.springframework.util.ObjectUtils.isEmpty;
 
 @RestController
 @RequestMapping("/api/pets")
@@ -30,29 +34,31 @@ import java.util.List;
         return ResponseEntity.status(HttpStatus.OK).body(petService.editPet(petDto));
     }
 
-    @DeleteMapping(value = "/{id}")
-    public void deletePet(@PathVariable("id") Long id) {
-        petService.deletePet(id);
+    @DeleteMapping(value = "/delete/{petId}")
+    public void deletePet(@PathVariable("petId") Long petId) {
+        petService.deletePet(petId);
     }
 
     @GetMapping(value = "/{id}/owner/{ownerId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<PetDto>> getPetsForPossibleMatching(@PathVariable("id") Long id, @PathVariable("ownerId") Long ownerId,
                                                                    @RequestParam(required = false) Integer startAge,
                                                                    @RequestParam(required = false) Integer endAge,
-                                                                   @RequestParam(required = false) String color,
-                                                                   @RequestParam(required = false) String awardName,
-                                                                   @RequestParam(required = false) String city) {
-        return ResponseEntity.ok(petService.getPetsForPossibleMatching(id,ownerId, startAge, endAge, color, awardName, city));
+                                                                   @RequestParam(required = false) Integer startKm,
+                                                                   @RequestParam(required = false) Integer endKm,
+                                                                   @RequestParam(required = false) String colors,
+                                                                   @RequestParam(required = false) String awardName) {
+        return ResponseEntity.ok(petService.getPetsForPossibleMatching(id,ownerId, startAge, endAge, startKm, endKm, getColorList(colors), awardName));
     }
 
     @GetMapping(value = "/{id}/matches", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<PetDto>> getPetsMatches(@PathVariable("id") Long id,
                                                        @RequestParam(required = false) Integer startAge,
                                                        @RequestParam(required = false) Integer endAge,
-                                                       @RequestParam(required = false) String color,
-                                                       @RequestParam(required = false) String awardName,
-                                                       @RequestParam(required = false) String city) {
-        return ResponseEntity.ok(petService.getPetFullMatches(id, startAge, endAge, color, awardName, city));
+                                                       @RequestParam(required = false) Integer startKm,
+                                                       @RequestParam(required = false) Integer endKm,
+                                                       @RequestParam(required = false) String colors,
+                                                       @RequestParam(required = false) String awardName) {
+        return ResponseEntity.ok(petService.getPetFullMatches(id, startAge, endAge, startKm, endKm, getColorList(colors), awardName));
     }
 
     @GetMapping(value = "breeds/{type}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -65,5 +71,11 @@ import java.util.List;
         return ResponseEntity.ok(petService.getColors(type));
     }
 
-
+    private List<String> getColorList (String colors) {
+        List<String> colorList = new ArrayList<>();
+        if (!isEmpty(colors)) {
+            colorList = Arrays.asList(colors.split(","));
+        }
+        return colorList;
+    }
 }

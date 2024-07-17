@@ -1,10 +1,8 @@
 package com.uvt.bachelor.pawfectmatch.service;
 
+import com.uvt.bachelor.pawfectmatch.DistanceUtil;
 import com.uvt.bachelor.pawfectmatch.Transformer;
-import com.uvt.bachelor.pawfectmatch.entity.Breed;
-import com.uvt.bachelor.pawfectmatch.entity.Color;
-import com.uvt.bachelor.pawfectmatch.entity.Match;
-import com.uvt.bachelor.pawfectmatch.entity.Pet;
+import com.uvt.bachelor.pawfectmatch.entity.*;
 import com.uvt.bachelor.pawfectmatch.exception.PawfectMatchException;
 import com.uvt.bachelor.pawfectmatch.model.PetDto;
 import com.uvt.bachelor.pawfectmatch.repository.*;
@@ -25,15 +23,19 @@ public class PetService {
     private final MatchRepository matchRepository;
     private final BreedRepository breedRepository;
     private final ColorRepository colorRepository;
+    private final PetImageRepository petImageRepository;
+    private final GeolocationService geolocationService;
 
     public PetService(PetRepository petRepository,
                       PetOwnerRepository ownerRepository, MatchRepository matchRepository,
-                      BreedRepository breedRepository, ColorRepository colorRepository) {
+                      BreedRepository breedRepository, ColorRepository colorRepository, PetImageRepository petImageRepository, GeolocationService geolocationService) {
         this.petRepository = petRepository;
         this.ownerRepository = ownerRepository;
         this.matchRepository = matchRepository;
         this.breedRepository = breedRepository;
         this.colorRepository = colorRepository;
+        this.petImageRepository = petImageRepository;
+        this.geolocationService = geolocationService;
     }
 
     public List<PetDto> getPetsByOwner(Long ownerId) {
@@ -57,11 +59,17 @@ public class PetService {
         return Transformer.toDto(petRepository.save(pet));
     }
 
-    //todo refactor
-    public List<PetDto> getPetsForPossibleMatching(Long id, Long ownerId, Integer startAge, Integer endAge, String color, String awardName, String city) {
+    public List<PetDto> getPetsForPossibleMatching(Long id, Long ownerId, Integer startAge, Integer endAge, Integer startKm, Integer endKm, List<String> colors, String awardName) {
         var pet = petRepository.findById(id).orElseThrow(() -> new PawfectMatchException(String.format("Pet with id: %d not found", id)));
-        ownerRepository.findById(ownerId).orElseThrow(() -> new PawfectMatchException(String.format("Owner with id: %d not found.", ownerId)));
+        PetOwner petOwner = ownerRepository.findById(ownerId).orElseThrow(() -> new PawfectMatchException(String.format("Owner with id: %d not found.", ownerId)));
         List<Pet> matchingPets = petRepository.findMatchingPets(pet.getType(), pet.getBreed(), pet.getGender(), id, ownerId);
+
+        Address address = petOwner.getAddress();
+        double[] ownerCoordinates = geolocationService.getCoordinates(
+                address.getPostalCode().toString(),
+                address.getCity(),
+                address.getCounty(),
+                address.getCountry());
 
 
         List<Match> partialMatches = matchRepository.findAllByFullMatch(false);
@@ -80,20 +88,46 @@ public class PetService {
                 .collect(Collectors.toSet());
         matchingPets.removeAll(myFullResponseMatches);
 
-        matchingPets = filterPets(startAge, endAge, color, awardName, city, matchingPets);
+        matchingPets = filterPets(startAge, endAge, startKm, endKm, colors, awardName, matchingPets, ownerCoordinates);
 
         return matchingPets.stream().map(Transformer::toDto).collect(Collectors.toList());
     }
 
-    private static List<Pet> filterPets(Integer startAge, Integer endAge, String color, String awardName, String city, List<Pet> matchingPets) {
+    private List<Pet> filterPets(Integer startAge, Integer endAge, Integer startKm, Integer endKm, List<String> colors, String awardName, List<Pet> matchingPets, double[] ownerCoordinates) {
+        if (!isEmpty(ownerCoordinates) && (!isEmpty(startKm) || !isEmpty(endKm))) {
+            matchingPets = matchingPets.stream()
+                    .filter(pet -> {
+                        Address petAddress = pet.getOwner().getAddress();
+                        double[] petCoordinates = geolocationService.getCoordinates(
+                                petAddress.getPostalCode().toString(),
+                                petAddress.getCity(),
+                                petAddress.getCounty(),
+                                petAddress.getCountry()
+                        );
+                        double distance = DistanceUtil.calculateDistance(
+                                ownerCoordinates[0], ownerCoordinates[1],
+                                petCoordinates[0], petCoordinates[1]
+                        );
+                        if (!isEmpty(startKm) && !isEmpty(endKm)) {
+                            return startKm <= distance && distance <= endKm;
+                        } else {
+                            if (!isEmpty(startKm)) {
+                                return startKm <= distance;
+                            } else {
+                                return distance <= endKm;
+                            }
+                        }
+                    })
+                    .collect(Collectors.toList());
+        }
         if (!isEmpty(startAge)) {
             matchingPets = matchingPets.stream().filter(p -> p.getAge() >= startAge).collect(Collectors.toList());
         }
         if (!isEmpty(endAge)) {
             matchingPets = matchingPets.stream().filter(p -> p.getAge() <= endAge).collect(Collectors.toList());
         }
-        if (!isEmpty(color)) {
-            matchingPets = matchingPets.stream().filter(p -> p.getColor().equals(color)).collect(Collectors.toList());
+        if (!isEmpty(colors)) {
+            matchingPets = matchingPets.stream().filter(p -> colors.contains(p.getColor())).collect(Collectors.toList());
         }
         if (!isEmpty(awardName)) {
             List<Pet> petsWithAward = new ArrayList<>();
@@ -105,13 +139,10 @@ public class PetService {
             }
             matchingPets = petsWithAward;
         }
-        if (!isEmpty(city)) {
-            matchingPets = matchingPets.stream().filter(p -> p.getOwner().getAddress().getCity().equals(city)).collect(Collectors.toList());
-        }
         return matchingPets;
     }
 
-    public List<PetDto> getPetFullMatches(Long id, Integer startAge, Integer endAge, String color, String awardName, String city) {
+    public List<PetDto> getPetFullMatches(Long id, Integer startAge, Integer endAge, Integer startKm, Integer endKm, List<String> colors, String awardName) {
         Pet pet = petRepository.findById(id).orElseThrow(() -> new PawfectMatchException(String.format("Pet with id: %d not found", id)));
         List<Match> fullMatches = matchRepository.findFullMatches(pet).stream()
                 .sorted(Comparator.comparing(Match::getMatchDate, OffsetDateTime::compareTo).reversed())
@@ -123,7 +154,7 @@ public class PetService {
         matchingPets.addAll(receivers);
         matchingPets.remove(pet);
 
-        matchingPets = filterPets(startAge, endAge, color, awardName, city, matchingPets);
+        matchingPets = filterPets(startAge, endAge, startKm, endKm, colors, awardName, matchingPets, null);
 
         return matchingPets.stream().map(Transformer::toDto).collect(Collectors.toList());
     }
@@ -133,6 +164,7 @@ public class PetService {
         Pet pet = petRepository.findById(id).orElseThrow(() -> new PawfectMatchException(String.format("Pet with id: %d not found", id)));
         Set<Match> matches = pet.getAllMatches();
         matchRepository.deleteAll(matches);
+        petImageRepository.deleteAll(pet.getPhotos());
         petRepository.delete(pet);
     }
 
