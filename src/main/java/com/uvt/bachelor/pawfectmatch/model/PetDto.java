@@ -1,12 +1,14 @@
 package com.uvt.bachelor.pawfectmatch.model;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public class PetDto {
 
     private Long id;
     private String name;
-    private Integer age; //todo change to birthdate - local date
+    private Integer age;
+    private LocalDate birthdate;
     private String gender;
     private String type;
     private String color;
@@ -97,5 +99,13 @@ public class PetDto {
 
     public void setPhotoIds(List<Long> photoIds) {
         this.photoIds = photoIds;
+    }
+
+    public LocalDate getBirthdate() {
+        return birthdate;
+    }
+
+    public void setBirthdate(LocalDate birthdate) {
+        this.birthdate = birthdate;
     }
 }

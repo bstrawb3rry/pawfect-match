@@ -3,6 +3,7 @@ package com.uvt.bachelor.pawfectmatch.entity;
 import jakarta.annotation.Nonnull;
 import jakarta.persistence.*;
 
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -25,7 +26,7 @@ public class Pet {
 
     @Column
     @Nonnull
-    private Integer age;
+    private LocalDate birthdate;
 
     @Column
     @Nonnull
@@ -36,6 +37,7 @@ public class Pet {
     private String type;
 
     @Column
+    @Nonnull
     private String color;
 
     @Column
@@ -84,12 +86,12 @@ public class Pet {
     }
 
     @Nonnull
-    public Integer getAge() {
-        return age;
+    public LocalDate getBirthdate() {
+        return birthdate;
     }
 
-    public void setAge(@Nonnull Integer age) {
-        this.age = age;
+    public void setBirthdate(@Nonnull LocalDate age) {
+        this.birthdate = age;
     }
 
     @Nonnull

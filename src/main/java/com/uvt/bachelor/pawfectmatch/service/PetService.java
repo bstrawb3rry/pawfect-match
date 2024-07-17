@@ -1,5 +1,6 @@
 package com.uvt.bachelor.pawfectmatch.service;
 
+import com.uvt.bachelor.pawfectmatch.AgeCalculator;
 import com.uvt.bachelor.pawfectmatch.DistanceUtil;
 import com.uvt.bachelor.pawfectmatch.Transformer;
 import com.uvt.bachelor.pawfectmatch.entity.*;
@@ -53,7 +54,7 @@ public class PetService {
 
     public PetDto editPet(PetDto petDto) {
         var pet = petRepository.findById(petDto.getId()).orElseThrow(() -> new PawfectMatchException(String.format("Pet with id: %d not found.", petDto.getId())));
-        pet.setAge(pet.getAge());
+        pet.setBirthdate(pet.getBirthdate());
         pet.setColor(pet.getColor());
         pet.setDescription(pet.getDescription());
         return Transformer.toDto(petRepository.save(pet));
@@ -121,10 +122,10 @@ public class PetService {
                     .collect(Collectors.toList());
         }
         if (!isEmpty(startAge)) {
-            matchingPets = matchingPets.stream().filter(p -> p.getAge() >= startAge).collect(Collectors.toList());
+            matchingPets = matchingPets.stream().filter(p -> AgeCalculator.calculateAge(p.getBirthdate()) >= startAge).collect(Collectors.toList());
         }
         if (!isEmpty(endAge)) {
-            matchingPets = matchingPets.stream().filter(p -> p.getAge() <= endAge).collect(Collectors.toList());
+            matchingPets = matchingPets.stream().filter(p -> AgeCalculator.calculateAge(p.getBirthdate()) <= endAge).collect(Collectors.toList());
         }
         if (!isEmpty(colors)) {
             matchingPets = matchingPets.stream().filter(p -> colors.contains(p.getColor())).collect(Collectors.toList());

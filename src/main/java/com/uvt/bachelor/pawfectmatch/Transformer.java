@@ -17,7 +17,8 @@ public class Transformer {
         if (!ObjectUtils.isEmpty(entity)) {
             dto.setId(entity.getId());
             dto.setName(entity.getName());
-            dto.setAge(entity.getAge());
+            dto.setBirthdate(entity.getBirthdate());
+            dto.setAge(AgeCalculator.calculateAge(entity.getBirthdate()));
             dto.setType(entity.getType());
             dto.setDescription(entity.getDescription());
             dto.setBreed(entity.getBreed());
@@ -38,10 +39,12 @@ public class Transformer {
             dto.setContent(entity.getContent());
             dto.setSenderId(entity.getSenderId());
             dto.setReceiverId(entity.getReceiverId());
-            String senderName = sender.getName();
-            String receiverName = receiver.getName();
-            dto.setSenderName(senderName);
-            dto.setReceiverName(receiverName);
+            dto.setSenderName(sender.getName());
+            dto.setReceiverName(receiver.getName());
+            String senderOwner = sender.getOwner().getFirstName() + " " + sender.getOwner().getLastName();
+            String receiverOwner = receiver.getOwner().getFirstName() + " " + receiver.getOwner().getLastName();
+            dto.setSenderOwner(senderOwner);
+            dto.setReceiverOwner(receiverOwner);
         }
         return dto;
     }
@@ -64,7 +67,7 @@ public class Transformer {
     public static Pet fromDto(PetDto dto) {
         var entity = new Pet();
         entity.setName(dto.getName());
-        entity.setAge(dto.getAge());
+        entity.setBirthdate(dto.getBirthdate());
         entity.setType(dto.getType());
         entity.setDescription(dto.getDescription());
         entity.setBreed(dto.getBreed());

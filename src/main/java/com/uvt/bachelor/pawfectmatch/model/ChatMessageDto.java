@@ -5,8 +5,10 @@ public class ChatMessageDto {
     private Long id;
     private Long senderId;
     private String senderName;
+    private String senderOwner;
     private Long receiverId;
     private String receiverName;
+    private String receiverOwner;
     private String content;
     private String timestamp;
 
@@ -67,5 +69,21 @@ public class ChatMessageDto {
 
     public void setTimestamp(String timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public String getSenderOwner() {
+        return senderOwner;
+    }
+
+    public void setSenderOwner(String senderOwner) {
+        this.senderOwner = senderOwner;
+    }
+
+    public String getReceiverOwner() {
+        return receiverOwner;
+    }
+
+    public void setReceiverOwner(String receiverOwner) {
+        this.receiverOwner = receiverOwner;
     }
 }
