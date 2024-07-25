@@ -12,6 +12,7 @@ import com.uvt.bachelor.pawfectmatch.repository.PetOwnerRepository;
 import com.uvt.bachelor.pawfectmatch.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class AuthService {
@@ -28,6 +29,7 @@ public class AuthService {
         this.passwordEncoder = passwordEncoder;
     }
 
+    @Transactional
     public UserDto signup(UserDto body) {
         User user = new User();
         user.setUsername(body.getUsername());

@@ -129,8 +129,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         var res = http.cors().and().csrf().disable()
                 .authorizeHttpRequests()
-                .requestMatchers("/api/auth/login/**").permitAll()
-                .requestMatchers("/api/auth/signup/**").permitAll()
+                .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers("/api/messages/**").permitAll()
                 .requestMatchers("/ws/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/pets/photo/**").permitAll()
