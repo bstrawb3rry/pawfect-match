@@ -52,9 +52,6 @@ public class Pet {
     private PetOwner owner;
 
     @OneToMany(mappedBy = "pet")
-    private Set<Award> awards;
-
-    @OneToMany(mappedBy = "pet")
     private Set<PetImage> photos;
 
     @OneToMany(mappedBy = "petInitMatch")
@@ -143,14 +140,6 @@ public class Pet {
 
     public void setOwner(PetOwner owner) {
         this.owner = owner;
-    }
-
-    public Set<Award> getAwards() {
-        return awards;
-    }
-
-    public void setAwards(Set<Award> awards) {
-        this.awards = awards;
     }
 
     public Set<Match> getInitiatedMatches() {

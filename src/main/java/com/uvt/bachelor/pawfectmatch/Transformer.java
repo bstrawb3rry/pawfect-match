@@ -13,6 +13,10 @@ import static org.springframework.util.ObjectUtils.isEmpty;
 public class Transformer {
 
     public static PetDto toDto(Pet entity) {
+        return toDto(entity, null);
+    }
+
+    public static PetDto toDto(Pet entity, Double distanceToSelectedPet) {
         var dto = new PetDto();
         if (!ObjectUtils.isEmpty(entity)) {
             dto.setId(entity.getId());
@@ -27,6 +31,9 @@ public class Transformer {
             dto.setOwner(toDto(entity.getOwner()));
             if (!isEmpty(entity.getPhotos())) {
                 dto.setPhotoIds(mapPhotosToDto(entity.getPhotos()));
+            }
+            if (!isEmpty(distanceToSelectedPet)) {
+                dto.setDistance(distanceToSelectedPet.intValue());
             }
         }
         return dto;
@@ -82,24 +89,11 @@ public class Transformer {
         dto.setFirstName(entity.getFirstName());
         dto.setLastName(entity.getLastName());
         dto.setEmail(entity.getEmail());
+        dto.setAddress(getAddress(entity));
         return dto;
     }
 
-    public static PetOwner fromDto(PetOwnerDto dto) {
-        var entity = new PetOwner();
-        entity.setFirstName(dto.getFirstName());
-        entity.setLastName(dto.getLastName());
-        entity.setEmail(dto.getEmail());
-        return entity;
-    }
-
-    public static MatchDto toDto(Match match) {
-        var dto = new MatchDto();
-        dto.setFullMatch(match.getFullMatch());
-        dto.setId(match.getId());
-        dto.setInitiator(toDto(match.getPetInitMatch()));
-        dto.setReceiver(toDto(match.getPetResponseMatch()));
-        dto.setMatchDate(match.getMatchDate());
-        return dto;
+    private static String getAddress(PetOwner owner) {
+        return owner.getAddress().getCity() + ", " + owner.getAddress().getCountry();
     }
 }

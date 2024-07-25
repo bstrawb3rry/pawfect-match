@@ -15,8 +15,8 @@ public class PetDto {
     private String breed;
     private String description;
     private PetOwnerDto owner;
-    //todo add awards
     private List<Long> photoIds;
+    private Integer distance;
 
     public PetDto() {
     }
@@ -107,5 +107,13 @@ public class PetDto {
 
     public void setBirthdate(LocalDate birthdate) {
         this.birthdate = birthdate;
+    }
+
+    public Integer getDistance() {
+        return distance;
+    }
+
+    public void setDistance(Integer distance) {
+        this.distance = distance;
     }
 }
