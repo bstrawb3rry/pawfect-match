@@ -7,7 +7,7 @@ public class AgeCalculator {
 
     public static Integer calculateAge(LocalDate birthdate) {
         if (birthdate == null) {
-            return null; // or throw an exception
+            return null;
         }
         return Period.between(birthdate, LocalDate.now()).getYears();
     }

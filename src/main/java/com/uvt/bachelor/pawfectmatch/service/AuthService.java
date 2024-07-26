@@ -59,7 +59,6 @@ public class AuthService {
         addressDto.setId(savedAddress.getId());
         userDto.setAddress(addressDto);
 
-        //todo
         savedAddress.setOwner(petOwner);
         addressRepository.save(savedAddress);
 

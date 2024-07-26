@@ -54,9 +54,9 @@ public class PetService {
 
     public PetDto editPet(PetDto petDto) {
         var pet = petRepository.findById(petDto.getId()).orElseThrow(() -> new PawfectMatchException(String.format("Pet with id: %d not found.", petDto.getId())));
-        pet.setBirthdate(pet.getBirthdate());
-        pet.setColor(pet.getColor());
-        pet.setDescription(pet.getDescription());
+        pet.setBirthdate(petDto.getBirthdate());
+        pet.setColor(petDto.getColor());
+        pet.setDescription(petDto.getDescription());
         return Transformer.toDto(petRepository.save(pet));
     }
 
