@@ -3,6 +3,8 @@ package com.uvt.bachelor.pawfectmatch.entity;
 import jakarta.annotation.Nonnull;
 import jakarta.persistence.*;
 
+import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -24,7 +26,7 @@ public class Pet {
 
     @Column
     @Nonnull
-    private Integer age;
+    private LocalDate birthdate;
 
     @Column
     @Nonnull
@@ -35,6 +37,7 @@ public class Pet {
     private String type;
 
     @Column
+    @Nonnull
     private String color;
 
     @Column
@@ -49,7 +52,7 @@ public class Pet {
     private PetOwner owner;
 
     @OneToMany(mappedBy = "pet")
-    private Set<Award> awards;
+    private Set<PetImage> photos;
 
     @OneToMany(mappedBy = "petInitMatch")
     private Set<Match> initiatedMatches;
@@ -59,6 +62,8 @@ public class Pet {
 
     public Pet() {
     }
+
+
 
     public Long getId() {
         return id;
@@ -78,12 +83,12 @@ public class Pet {
     }
 
     @Nonnull
-    public Integer getAge() {
-        return age;
+    public LocalDate getBirthdate() {
+        return birthdate;
     }
 
-    public void setAge(@Nonnull Integer age) {
-        this.age = age;
+    public void setBirthdate(@Nonnull LocalDate age) {
+        this.birthdate = age;
     }
 
     @Nonnull
@@ -137,14 +142,6 @@ public class Pet {
         this.owner = owner;
     }
 
-    public Set<Award> getAwards() {
-        return awards;
-    }
-
-    public void setAwards(Set<Award> awards) {
-        this.awards = awards;
-    }
-
     public Set<Match> getInitiatedMatches() {
         return initiatedMatches;
     }
@@ -159,5 +156,20 @@ public class Pet {
 
     public void setReceivedMatches(Set<Match> receivedMatches) {
         this.receivedMatches = receivedMatches;
+    }
+
+    public Set<Match> getAllMatches() {
+        Set<Match> matches = new HashSet<>();
+        matches.addAll(initiatedMatches);
+        matches.addAll(receivedMatches);
+        return matches;
+    }
+
+    public Set<PetImage> getPhotos() {
+        return photos;
+    }
+
+    public void setPhotos(Set<PetImage> photos) {
+        this.photos = photos;
     }
 }
